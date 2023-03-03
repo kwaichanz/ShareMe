@@ -21,6 +21,7 @@ const Login = () => {
             userName: name,
             image: picture,
         }
+        console.log('doc: ', doc)
 
         client.createIfNotExists(doc)
             .then(() => {
