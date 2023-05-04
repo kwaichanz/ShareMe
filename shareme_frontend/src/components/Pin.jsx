@@ -2,16 +2,24 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { MdDownloadForOffline } from "react-icons/md";
-import { AiTwoToneDelete } from "react-icons/ai";
+import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 
 import { client, urlFor } from "../client";
+import { fetchUser } from "../utils/fetchUser";
 
-const Pin = ({ pin: { postedBy, image, _id, destination } }) => {
+const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
-
   const navigate = useNavigate();
+  const user = fetchUser();
+
+  const alreadySaved = (save?.filter(
+    (item) => item.postedBy._id === user.googleId
+  )).length;
+
+  // 1 [2,3,1] -> [1].length -> 1 -> !1 -> false -> !false -> true
+  // 4 [2,3,1] -> [1].length -> 0 -> !0 -> true -> !true -> false
 
   return (
     <div className="m-2">
@@ -26,6 +34,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination } }) => {
           alt="user-post"
           src={urlFor(image).width(250).url()}
         />
+
         {postHovered && (
           <div
             className="absolute top-0 w-full h-full flex flex-col justify-between p-1 pr-2 pt-2 pb-2 z-50"
@@ -37,10 +46,16 @@ const Pin = ({ pin: { postedBy, image, _id, destination } }) => {
                   href={`${image?.asset?.url}?dl=`}
                   download
                   onClick={(e) => e.stopPropagation()}
+                  className="bg-white w-8 h-8 rounded-full flex items-center justify-center text-xl opacity-75 hover:opacity-100 hover:shadow-md outline-none"
                 >
                   <MdDownloadForOffline />
                 </a>
               </div>
+              {alreadySaved?.length !== 0 ? (
+                <button>Saved</button>
+              ) : (
+                <button>Save</button>
+              )}
             </div>
           </div>
         )}
