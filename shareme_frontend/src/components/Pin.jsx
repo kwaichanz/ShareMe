@@ -10,10 +10,8 @@ import { fetchUser } from "../utils/fetchUser";
 
 const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
   const [postHovered, setPostHovered] = useState(false);
-  const [savingPost, setSavingPost] = useState(false);
   const navigate = useNavigate();
   const user = fetchUser();
-
 
   let alreadySaved = !!save?.filter(
     (item) => item?.postedBy?._id === user?.googleId
@@ -21,8 +19,6 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
 
   const savePin = (id) => {
     if (!alreadySaved) {
-      setSavingPost(true);
-
       client
         .patch(id)
         .setIfMissing({ save: [] })
@@ -39,7 +35,6 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
         .commit()
         .then(() => {
           window.location.reload();
-          setSavingPost(false);
         });
     }
   };
@@ -92,6 +87,21 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                 >
                   Save
                 </button>
+              )}
+            </div>
+            <div className="flex justify-between items-center gap-2 w-full">
+              {destination && (
+                <a
+                  href={destination}
+                  target="_blank"
+                  rel="noreferer"
+                  className="bg-white flex items-center gap-2 text-black font-bold p-2 pl-4 pr-4 rounded-full opacity-70 hover:opacity-100 hover:shadow-md"
+                >
+                  <BsFillArrowUpRightCircleFill />
+                  {destination.length > 20
+                    ? destination.slice(8, 24)
+                    : destination.slice(8)}
+                </a>
               )}
             </div>
           </div>
