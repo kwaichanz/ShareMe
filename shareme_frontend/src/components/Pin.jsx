@@ -39,6 +39,12 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
     }
   };
 
+  const deletePin = (id) => {
+    client.delete(id).then(() => {
+      window.location.reload();
+    });
+  };
+
   return (
     <div className="m-2">
       <div
@@ -102,6 +108,18 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                     ? destination.slice(8, 24)
                     : destination.slice(8)}
                 </a>
+              )}
+              {postedBy?._id === user.googleId && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deletePin(_id);
+                  }}
+                  className="bg-white p-2 rounded-full w-8 h-8 flex items-center justify-center text-dark opacity-75 hover:opacity-100 outline-none"
+                >
+                  <AiTwotoneDelete />d
+                </button>
               )}
             </div>
           </div>
