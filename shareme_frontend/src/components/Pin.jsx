@@ -13,11 +13,19 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
   const navigate = useNavigate();
   const user = fetchUser();
 
+  const userA =
+    localStorage.getItem("user") !== "undefined"
+      ? JSON.parse(localStorage.getItem("user"))
+      : localStorage.clear();
+
   let alreadySaved = !!save?.filter(
     (item) => item?.postedBy?._id === user?.googleId
+    // (item) => item?.postedBy?._id === userA?.sub
   )?.length;
 
   const savePin = (id) => {
+    console.log("posted By = ", postedBy);
+    console.log("user id = ", userA);
     if (!alreadySaved) {
       client
         .patch(id)
@@ -25,10 +33,10 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
         .insert("after", "save[-1]", [
           {
             _key: uuidv4(),
-            userId: user.googleId,
+            userId: user?.googleId,
             postedBy: {
               _type: "postedBy",
-              _ref: user.googleId,
+              _ref: user?.googleId,
             },
           },
         ])
@@ -109,7 +117,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                     : destination.slice(8)}
                 </a>
               )}
-              {postedBy?._id === user.googleId && (
+              {postedBy?._id === userA.sub && (
                 <button
                   type="button"
                   onClick={(e) => {
@@ -118,13 +126,24 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                   }}
                   className="bg-white p-2 rounded-full w-8 h-8 flex items-center justify-center text-dark opacity-75 hover:opacity-100 outline-none"
                 >
-                  <AiTwotoneDelete />d
+                  <AiTwotoneDelete />
                 </button>
               )}
             </div>
           </div>
         )}
       </div>
+      <Link
+        to={`user-profile/${postedBy?._id} `}
+        className="flex gap-2 mt-2 items-center"
+      >
+        <img
+          className="w-8 h-8 rounded-full object-cover"
+          src={postedBy?.image}
+          alt="user-profile"
+        />
+        <p className="font-semibold capitalize">{postedBy?.userName}</p>
+      </Link>
     </div>
   );
 };
