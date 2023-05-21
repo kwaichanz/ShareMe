@@ -15,8 +15,6 @@ const PinDetail = ({ user }) => {
   const [addingComment, setAddingComment] = useState(false);
   const { pinId } = useParams();
 
-  if (!pinDetail) return <Spinner message="Loading pin..." />;
-
   const fetchPinDetails = () => {
     let query = pinDetailQuery(pinId);
     if (query) {
@@ -36,7 +34,19 @@ const PinDetail = ({ user }) => {
     fetchPinDetails();
   }, [pinId]);
 
-  return <div>PinDetail</div>;
+  if (!pinDetail) return <Spinner message="Loading pin..." />;
+
+  return (
+    <div
+      className="flex xl-flex-row flex-col m-auto bg-white"
+      style={{ maxWidth: "1500px", borderRadius: "32px" }}
+    >
+      <div className="flex justify-center items-center md:items-start flex-initial">
+        <img src={pinDetail?.image && urlFor(pinDetail.image).url()} alt="" />
+      </div>
+      PinDetail
+    </div>
+  );
 };
 
 export default PinDetail;
